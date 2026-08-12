@@ -49,10 +49,17 @@ interface Url {
 }
 
 interface Product {
-    type: any;
     id: number;
     name: string;
     description: string;
     stock: number;
-    price: number
+    price: number;
+    type: any;
+    photos:any;
+}
+
+interface ProductType {
+    id: number;
+    name: string;
+    description: string;
 }

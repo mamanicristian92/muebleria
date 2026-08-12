@@ -1,90 +1,101 @@
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, Product, Url } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/react';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import InputError from '@/components/input-error';
+import TablePagination from '@/components/table-pagination';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import Pagination from '@/components/pagination';
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+import { Permission, Role, SinglePermission } from '@/types/role_permission';
+import { User } from '@/types/users';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+
+import { DeleteIcon, Loader2, PencilIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Productos',
-        href: route('products.index'),
+        title: 'Users',
+        href: '/users',
     },
 ];
 
-interface ProductsPaginated {
-    data: Product[];
-    links: Url[];
-}
+export default function Index({users}: {users: User}) {
 
-export default function Index({products}: {products: ProductsPaginated}) {
-    const {processing, delete: destroy} = useForm();
+    const {flash} = usePage<{flash: {message?: string}}>().props;
 
-    const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this product')) {
-            destroy(route('products.destroy', id))
+    useEffect(()=>{
+        if(flash.message) {
+            toast.success(flash.message); 
+        }
+    }, [flash.message]);
+
+    function deleteUser(id:number){
+        if (confirm('Are you sure want to delete this user?')){
+            router.delete(`users/${id}`);
         }
     }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Productos" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Link href={route('products.create')}>
-                    <Button className='mb-4'>
-                        Create Product
-                    </Button>
-                </Link>
-                {products.data.length > 0 && (
-                    <Table>
-                        <TableCaption>Lista de Prodcutos</TableCaption>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[100px]">ID</TableHead>
-                                <TableHead>Nombre</TableHead>
-                                <TableHead>Descripción</TableHead>
-                                <TableHead>Stock</TableHead>
-                                <TableHead>Precio</TableHead>
-                                <TableHead>Tipo</TableHead>
-                                <TableHead className="text-right">Acciones</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {products.data.map((product) => (
-                                <TableRow key={product.id}>
-                                    <TableCell className="font-medium">{product.id}</TableCell>
-                                    <TableCell>{product.name}</TableCell>
-                                    <TableCell>{product.description}</TableCell>
-                                    <TableCell>{product.stock}</TableCell>
-                                    <TableCell>{new Intl.NumberFormat('en-us', {minimumFractionDigits: 2}).format(product.price)}</TableCell>
-                                    <TableCell>{product.type.name}</TableCell>
-                                    <TableCell className="text-right space-x-2">
-                                        <Link /* href={route('products.edit', product.id)} */>
-                                            <Button className='bg-slate-500 hover:bg-slate-700'>Edit</Button>
+            <Head title="Users" />
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+                <Card>
+                    <CardHeader className='flex items-center justify-between'>
+                        <CardTitle>Users Management</CardTitle>
+                        <CardAction>
+                            <Link href={'users/create'}>
+                                <Button variant={'default'}>Add New</Button>
+                            </Link>
+                        </CardAction>
+                    </CardHeader>
+                    <hr />
+                    <CardContent>
+                        <Table>
+                            <TableHeader className='bg-slate-500 dark:bg-slate-500'>
+                                <TableRow>
+                                    <TableHead className='font-bold text-white'>ID</TableHead>
+                                    <TableHead className='font-bold text-white'>Name</TableHead>
+                                    <TableHead className='font-bold text-white'>Email</TableHead>
+                                    <TableHead className='font-bold text-white'>Roles</TableHead>
+                                    <TableHead className='font-bold text-white'>Created</TableHead>
+                                    <TableHead className='font-bold text-white'>Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {users.data.map((user, index) => (
+                                                                    <TableRow className='odd:bg-slate-100 dark:odd:bg-slate-800'>
+                                    <TableCell>{user.id}</TableCell>
+                                    <TableCell>{user.name}</TableCell>
+                                    <TableCell>{user.email}</TableCell>
+                                    <TableCell className='flex flex-wrap items-center gap-2'>{user.roles.map((role, index) => (
+                                        <Badge variant={'outline'} key={index}>{role}</Badge>
+                                    ))}</TableCell>
+                                    <TableCell>{user.created_at}</TableCell>
+                                    <TableCell>
+                                        <Link href={`users/${user.id}/edit`}>
+                                            <Button variant={'outline'}><PencilIcon size={18}></PencilIcon>Edit</Button>
                                         </Link>
-                                        <Button
-                                            disabled={processing}
-                                            className='bg-red-500 hover:bg-red-700'
-                                            onClick={() => handleDelete(product.id)}
-                                        >Delete</Button>
+                                        <Button className='m-4' variant={'destructive'} onClick={() => deleteUser(user.id)}><DeleteIcon size={18}></DeleteIcon>Delete</Button>
                                     </TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                )}
-                <div className='my-2'>
-                    <Pagination links={products.links} />
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                    {users.data.length > 0? (
+                        <TablePagination
+                            total={users.total}
+                            from={users.from}
+                            to = {users.to}
+                            links={users.links}
+                        ></TablePagination>
+                    ):(<div className='flex h-full items-center justify-center'>No Results Found!</div>)} 
+                </Card>
+                
                 </div>
-            </div>
         </AppLayout>
     );
 }
-

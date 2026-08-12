@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Lock, LockKeyhole, Gift, PackageSearch, User } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -25,7 +25,27 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Productos',
         href: route('products.index'),
-        icon: LayoutGrid,
+        icon: Gift,
+    },
+    {
+        title: 'Tipos de Producto',
+        href: route('products_type.index'),
+        icon: PackageSearch,
+    },
+    {
+        title: 'Usuarios',
+        href: route('users.index'),
+        icon: User,
+    },
+    {
+        title: 'Permissions',
+        href: '/permissions',
+        icon: Lock,
+    },
+    {
+        title: 'Roles',
+        href: '/roles',
+        icon: LockKeyhole,
     },
 ];
 

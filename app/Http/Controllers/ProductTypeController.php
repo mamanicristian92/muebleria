@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductTypeRequest;
 use App\Http\Requests\UpdateProductTypeRequest;
 use App\Models\ProductType;
+use Inertia\Inertia;
+use Log;
 
 class ProductTypeController extends Controller
 {
@@ -14,6 +16,9 @@ class ProductTypeController extends Controller
     public function index()
     {
         //
+        return Inertia::render('products_type/index', [
+            'products_type' => ProductType::paginate(10),
+        ]);
     }
 
     /**
@@ -22,6 +27,9 @@ class ProductTypeController extends Controller
     public function create()
     {
         //
+        return inertia('products_type/create', [
+            'products' => new ProductType(),
+        ]);
     }
 
     /**
@@ -30,6 +38,9 @@ class ProductTypeController extends Controller
     public function store(StoreProductTypeRequest $request)
     {
         //
+        $validated = $request->validated();
+        ProductType::create($validated);
+        return redirect()->route('products_type.index');
     }
 
     /**
@@ -38,6 +49,9 @@ class ProductTypeController extends Controller
     public function show(ProductType $productType)
     {
         //
+        return Inertia::render('products_type/show', [
+            'product_type' => $productType,
+        ]);
     }
 
     /**
@@ -46,6 +60,9 @@ class ProductTypeController extends Controller
     public function edit(ProductType $productType)
     {
         //
+        return Inertia::render('products_type/edit', [
+            'product_type' => $productType,
+        ]);
     }
 
     /**
@@ -54,6 +71,9 @@ class ProductTypeController extends Controller
     public function update(UpdateProductTypeRequest $request, ProductType $productType)
     {
         //
+        $validated = $request->validated();
+        $productType->update($validated);
+        return redirect()->route('products_type.index');
     }
 
     /**

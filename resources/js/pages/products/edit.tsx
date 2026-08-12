@@ -13,12 +13,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CircleX } from 'lucide-react';
-import { router } from '@inertiajs/react';
+import { index, edit, update} from "@/routes/products";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Create Product',
-        href: '/products/create',
+        title: 'Producto',
+        href: index().url,
+    },
+    {
+        title: 'Editar',
+        href: index().url,
     },
 ];
 
@@ -45,7 +49,7 @@ interface ProductType {
     description: string;
 }
 
-export default function Edit({product, productTypes}: {product: Product[], productTypes: ProductType[]}) {
+export default function Edit({product, productTypes}: {product: Product, productTypes: ProductType[]}) {
 
     const {data, setData, post, processing, errors} = useForm({
         id: product.id,
@@ -62,9 +66,10 @@ export default function Edit({product, productTypes}: {product: Product[], produ
 
     const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(data);
+        //console.log(data);
 
-        post(route('products.update', product.id), {
+        //post(route('products.update', product.id), {
+        post(update(product.id).url, {
             //forceFormData: true,
             //body:data,
         });

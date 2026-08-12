@@ -2,6 +2,7 @@ import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
+//import route from 'ziggy-js';
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from '@/components/ui/button';
 import React from 'react';
@@ -13,12 +14,17 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useState } from 'react';
+import { index, create, store } from "@/routes/products"
 
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Create Product',
-        href: '/products/create',
+        title: 'Productos',
+        href: index().url,
+    },
+    {
+        title: 'Crear',
+        href: create().url,
     },
 ];
 
@@ -43,7 +49,7 @@ export default function Create({productTypes}: {productTypes: ProductType[]}) {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(route('products.store'));
+        post(store().url);
     }
 
     return (

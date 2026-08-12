@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, Link } from '@inertiajs/react';
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from '@/components/ui/button';
 import React from 'react';
@@ -57,6 +57,15 @@ export default function View({product}: {product: Product}) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Products | Create" />
             <div className='p-4 max-w-md'>
+                <div className="my-4">
+                    <Button asChild
+                        size="sm"
+                        >
+                        <Link href="/products">
+                            Volver
+                        </Link>
+                    </Button>
+                </div>
                 <form onSubmit={handleSubmit} method='post' className='space-y-4' encType='multipart/form-data'>
                     <div className='gap-1.5'>
                         <Input
@@ -129,19 +138,20 @@ export default function View({product}: {product: Product}) {
                                             alt={`Preview ${index + 1}`}
                                             className='w-50 h-50 object-cover rounded-md'
                                         />
-                                        <button className="absolute top-1 right-1 bg-white rounded-2xl text-black">
+                                        {/* <button className="absolute top-1 right-1 bg-white rounded-2xl text-black">
                                             <CircleX size={20}/>
-                                        </button>
+                                        </button> */}
                                     </div>
                                 ))}
                             </div>
                         )}
                     </div>
-                    <Button disabled={processing} type='submit'>
-                        Create Product
-                    </Button>
                 </form>
             </div>
         </AppLayout>
     );
 }
+function route(arg0: string): string {
+    throw new Error('Function not implemented.');
+}
+
